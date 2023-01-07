@@ -14,6 +14,8 @@ src
 target_sources(${PROJECT_NAME} PRIVATE
 
 src/main.cpp
+src/Grid.hpp
+src/Grid.cpp
 
 )
 

@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
+#include "Grid.hpp"
 
 
 namespace {
@@ -28,6 +29,14 @@ void run(char** argv) {
     background.setPosition(0, 0);
     background.setFillColor(sf::Color(20, 20, 30));
     
+    //declare main grid
+    conway::Grid main_grid = conway::Grid(128, 96);
+    main_grid.set_spacing(12.0f);
+    main_grid.update();
+    
+    //start with a basic random init with 40% cell genesis
+    main_grid.random_init();
+    
     //game loop
     while (window.isOpen()) {
         //SFML event variable
@@ -38,6 +47,16 @@ void run(char** argv) {
                 case sf::Event::Closed:
                     return;
                     break;
+                case sf::Event::KeyPressed:
+                    //player can refresh grid by pressing 'Z'
+                    if(event.key.code == sf::Keyboard::Z) {
+                        main_grid.random_init();
+                    }
+                    //player can pause grid by pressing 'X'
+                    if(event.key.code == sf::Keyboard::X) {
+                        paused = !paused;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -46,8 +65,16 @@ void run(char** argv) {
         //game logic and rendering
         if(elapsed.asMilliseconds() >= time_step && !paused) {
             
+            main_grid.tick_cells();
+            
             window.clear();
             window.draw(background);
+            
+            //draw the cells
+            for(int i = 0; i < main_grid.get_size(); ++i) {
+                window.draw(main_grid.get_drawable_at(i));
+            }
+            
             window.display();
             
             elapsed = sf::Time::Zero;
