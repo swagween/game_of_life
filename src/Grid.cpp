@@ -9,6 +9,8 @@
 
 namespace conway {
 
+// Cell
+
 Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE st) {
     index = idx;
     position = pos;
@@ -27,6 +29,7 @@ Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE s
 }
 
 void Cell::tick() {
+    // change colors based on state for style
     switch (state) {
         case CELL_STATE::CELL_OFF:
             drawable.setOutlineThickness(0);
@@ -83,6 +86,8 @@ void Cell::update_position() {
     drawable.setPoint(2, sf::Vector2f( position.x + spacing, position.y + spacing ));
     drawable.setPoint(3, sf::Vector2f( position.x          , position.y + spacing ));
 }
+
+// Grid
 
 Grid::Grid() {
     
@@ -181,7 +186,7 @@ sf::ConvexShape& Grid::get_drawable_at(int i) {
 }
 
 int Grid::get_size() {
-    return cells.size();
+    return static_cast<int>(cells.size());
 }
 
 void Grid::push_cells(int i) {
