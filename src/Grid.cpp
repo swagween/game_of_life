@@ -265,6 +265,7 @@ std::vector<std::reference_wrapper<Cell> > Grid::get_neighbors(const Cell &curre
     //edge cases. here we implement a simple wrap-around
     if(up_index < 0) { up_index += grid_size; up_left_index += grid_size; up_right_index += grid_size; } //wrap top edge
     if(down_index > grid_size - 1) { down_index %= grid_size; down_left_index %= grid_size; down_right_index %= grid_size; } //wrap bottom edge
+    if(left_index < 0) { left_index = grid_width - 1; }
     
     if(right_index % grid_width == 0) { right_index -= grid_width; up_right_index -= grid_width; down_right_index -= grid_width; } //wrap right side
     if(left_index % grid_width == grid_width - 1) { left_index += grid_width; up_left_index += grid_width; down_left_index += grid_width;} //wrap left side

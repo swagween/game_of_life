@@ -32,7 +32,7 @@ void run(char** argv) {
     background.setFillColor(sf::Color(20, 20, 30));
     
     //declare main grid
-    conway::Grid main_grid = conway::Grid(128, 96);
+    conway::Grid main_grid = conway::Grid(128, 64);
     main_grid.set_spacing(12.0f);
     main_grid.update();
     
