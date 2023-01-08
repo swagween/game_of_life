@@ -11,6 +11,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
 target_include_directories(${PROJECT_NAME} PRIVATE
 	src
 )
+
 target_sources(${PROJECT_NAME} PRIVATE
 
 	src/main.cpp
@@ -20,11 +21,11 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
-  target_compile_options(${PROJECT_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic -Wconversion -Werror=return-type
-  )
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -Wall -Wextra -Wpedantic -Wconversion -Werror=return-type
+)
 endif()
 
 if(CMAKE_GENERATOR MATCHES "^(Visual Studio)")
-  target_compile_options(${PROJECT_NAME} INTERFACE /MP)
+    target_compile_options(${PROJECT_NAME} INTERFACE /MP)
 endif()

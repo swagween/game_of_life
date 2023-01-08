@@ -11,16 +11,9 @@ namespace conway {
 
 // Cell
 
-Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE st) {
-    index = idx;
-    position = pos;
-    spacing = spc;
-    state = st;
-    kill_next_cycle = false;
-    activate_next_cycle = false;
-    
+Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE st) :
+    index(idx), position(pos), spacing(spc), state(st) {
     //init cell drawable
-    drawable = sf::ConvexShape();
     drawable.setPointCount(4);
     drawable.setPoint(0, sf::Vector2f( position.x          , position.y           ));
     drawable.setPoint(1, sf::Vector2f( position.x + spacing, position.y           ));
@@ -32,6 +25,7 @@ void Cell::tick() {
     // change colors based on state for style
     switch (state) {
         case CELL_STATE::CELL_OFF:
+            drawable.setOutlineColor(GoL_Black);
             drawable.setOutlineThickness(0);
             drawable.setFillColor(GoL_Black);
             break;
@@ -89,31 +83,23 @@ void Cell::update_position() {
 
 // Grid
 
-Grid::Grid() {
-    
-    grid_width = 0;
-    grid_height = 0;
-    spacing = DEFAULT_SPACING;
-    
-}
-
-Grid::Grid(uint32_t width, uint32_t height) {
-    
-    grid_width = width;
-    grid_height = height;
-    spacing = DEFAULT_SPACING;
+Grid::Grid(uint32_t width, uint32_t height) : grid_width(width), grid_height(height) {
     
     initialize();
     
 }
 
 void Grid::random_init() {
-    if(!cells.empty()) {
-        for(auto& cell : cells) {
-            int r = floor(rand()*100);
-            if(r > 40) {
-                cell.state = CELL_STATE::CELL_ON;
-            }
+    
+    //generate random number with a uniform distribution
+    std::random_device device;
+    std::mt19937 rng(device());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 100);
+    
+    for(auto& cell : cells) {
+        int r = dist6(rng);
+        if(r > 80) {
+            cell.state = CELL_STATE::CELL_ON;
         }
     }
 }
@@ -246,7 +232,7 @@ void Grid::tick_cells() {
     
 }
 
-const std::vector<std::reference_wrapper<Cell> > Grid::get_neighbors(Cell &current_cell) {
+std::vector<std::reference_wrapper<Cell> > Grid::get_neighbors(const Cell &current_cell) {
     
     int grid_size = grid_height * grid_width; // to use for edge cases
     std::vector<std::reference_wrapper<Cell> > neighbor_list;

@@ -10,6 +10,7 @@
 #include <vector>
 #include <cmath>
 #include <functional>
+#include <random>
 
 namespace conway {
 
@@ -35,7 +36,7 @@ inline sf::Color GoL_Black          = sf::Color(55,  49,  64 );
 inline sf::Color GoL_Periwinkle     = sf::Color(159, 138, 247);
 inline sf::Color GoL_Green          = sf::Color(81,  186, 155);
 
-constexpr float DEFAULT_SPACING = 16.0;
+constexpr float default_spacing = 16.0;
 
 struct Cell {
     
@@ -51,8 +52,7 @@ struct Cell {
     // Cell member vars
     sf::Vector2<int> index{};
     sf::Vector2<float> position{};
-    // for drawing the cell
-    sf::ConvexShape drawable{};
+    sf::ConvexShape drawable{}; // for drawing the cell
     
     float spacing{};
     
@@ -61,37 +61,37 @@ struct Cell {
     bool kill_next_cycle{};
     bool activate_next_cycle{};
     
-    CELL_STATE state;
+    CELL_STATE state{};
 
 };
 
 class Grid {
 public:
     
-    Grid();
+    Grid() = default;
     Grid(uint32_t width, uint32_t height);
     
-    uint32_t grid_width{};
-    uint32_t grid_height{};
+    uint32_t grid_width{ 0 };
+    uint32_t grid_height{ 0 };
     
-    // how far apart are the grid elements?
-    float spacing{};
+    float spacing = default_spacing; //how far apart are the grid elements?
     
-    void random_init();
+    //main grid functions
     void initialize();
+    void random_init();
     void update();
+    void tick_cells();
+    void push_cells(int i); //helper for setting vertices and offsets
     
     //for Game of Life rules and helper functions
-    void tick_cells();
-    const std::vector<std::reference_wrapper<Cell> > get_neighbors(Cell& current_cell);
-    
-    //grid init functions
-    void set_spacing(float spc);
+    std::vector<std::reference_wrapper<Cell> > get_neighbors(const Cell& current_cell);
+
+    //getters
     sf::ConvexShape& get_drawable_at(int i);
     const int get_size();
     
-    //helper for setting vertices and offsets
-    void push_cells(int i);
+    //setters
+    void set_spacing(float spc);
     
 private:
     //the cells of the grid

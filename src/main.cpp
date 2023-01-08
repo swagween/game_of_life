@@ -5,27 +5,29 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <chrono>
 #include <iostream>
 #include "Grid.hpp"
 
-
 namespace {
 
+const sf::Vector2<uint32_t> screen_dimensions { 1420, 1000 };
 const int SCREEN_WIDTH = 1420;
 const int SCREEN_HEIGHT = 1000;
 
 void run(char** argv) {
     
-    sf::Clock clock;
-    sf::Time elapsed;
+    //init clock
+    std::chrono::time_point<std::chrono::system_clock> start{}, end{};
+    std::chrono::duration<double> elapsed_time{};
     
     int time_step = 64;
     bool paused = false;
     
     //some SFML variables for drawing a basic window + background
-    auto window = sf::RenderWindow{sf::VideoMode{SCREEN_WIDTH, SCREEN_HEIGHT}, "Game of Life v1.0"};
-    sf::RectangleShape background = sf::RectangleShape();
-    background.setSize({SCREEN_WIDTH, SCREEN_HEIGHT});
+    auto window = sf::RenderWindow{sf::VideoMode{screen_dimensions.x, screen_dimensions.y}, "Game of Life v1.0"};
+    sf::RectangleShape background{};
+    background.setSize(static_cast<sf::Vector2<float> >(screen_dimensions));
     background.setPosition(0, 0);
     background.setFillColor(sf::Color(20, 20, 30));
     
@@ -39,6 +41,9 @@ void run(char** argv) {
     
     //game loop
     while (window.isOpen()) {
+        
+        start = std::chrono::system_clock::now(); //start clock
+        
         //SFML event variable
         auto event = sf::Event{};
         //check window events
@@ -46,7 +51,6 @@ void run(char** argv) {
             switch(event.type) {
                 case sf::Event::Closed:
                     return;
-                    break;
                 case sf::Event::KeyPressed:
                     //player can refresh grid by pressing 'Z'
                     if(event.key.code == sf::Keyboard::Z) {
@@ -63,7 +67,7 @@ void run(char** argv) {
         }
         
         //game logic and rendering
-        if(elapsed.asMilliseconds() >= time_step && !paused) {
+        if(!paused) {
             
             main_grid.tick_cells();
             
@@ -77,12 +81,11 @@ void run(char** argv) {
             
             window.display();
             
-            elapsed = sf::Time::Zero;
         }
         
         //update clock
-        elapsed += clock.getElapsedTime();
-        clock.restart();
+        end = std::chrono::system_clock::now();
+        elapsed_time = end - start;
         
     }
 }
