@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <chrono>
+#include <thread>
 #include <iostream>
 #include "Grid.hpp"
 
@@ -19,9 +20,9 @@ void run(char** argv) {
     
     //init clock
     std::chrono::time_point<std::chrono::system_clock> start{}, end{};
-    std::chrono::duration<double> elapsed_time{};
+    std::chrono::duration<double, std::milli> work_time{}, sleep_time{};
     
-    int time_step = 64;
+    const double time_step = 1000.0/30.0; //30 FPS
     bool paused = false;
     
     //some SFML variables for drawing a basic window + background
@@ -32,7 +33,7 @@ void run(char** argv) {
     background.setFillColor(sf::Color(20, 20, 30));
     
     //declare main grid
-    conway::Grid main_grid = conway::Grid(128, 64);
+    conway::Grid main_grid = conway::Grid(96, 64);
     main_grid.set_spacing(12.0f);
     main_grid.update();
     
@@ -43,6 +44,17 @@ void run(char** argv) {
     while (window.isOpen()) {
         
         start = std::chrono::system_clock::now(); //start clock
+        std::chrono::duration<double, std::milli> work_time = start - end;
+        
+        if (work_time.count() < time_step)
+        {
+            std::chrono::duration<double, std::milli> delta_ms(time_step - work_time.count());
+            auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+        }
+        
+        end = std::chrono::system_clock::now();
+        sleep_time = end - start;
         
         //SFML event variable
         auto event = sf::Event{};
@@ -82,11 +94,6 @@ void run(char** argv) {
             window.display();
             
         }
-        
-        //update clock
-        end = std::chrono::system_clock::now();
-        elapsed_time = end - start;
-        
     }
 }
 } // namespace
