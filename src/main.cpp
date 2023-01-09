@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include "Grid.hpp"
+#include "Stopwatch.hpp"
 
 namespace {
 
@@ -14,7 +15,6 @@ const sf::Vector2<uint32_t> screen_dimensions { 764, 508 };
 void run(char** argv) {
     
     //init clock
-    
     using Clock = std::chrono::steady_clock;
     using Time = std::chrono::duration<float>;
     const double time_step = 1000.0/30.0; //30 FPS
@@ -44,12 +44,6 @@ void run(char** argv) {
         auto now = Clock::now();
         auto dt = Time{now - start};
         start = now;
-        
-        if (dt.count() < time_step) {
-            std::chrono::duration<double, std::milli> delta_ms(time_step - dt.count());
-            auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
-            std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
-        }
         
         //SFML event variable
         auto event = sf::Event{};
