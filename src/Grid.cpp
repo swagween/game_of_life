@@ -205,19 +205,11 @@ void Grid::push_cells(int i) {
 
 void Grid::tick_cells() {
     
-//    grid_watch.lap("init vars");
-    std::vector<std::reference_wrapper<Cell> > neighbor_list{};
     int living_neighbor_counter = 0;
     
     //game logic
-//    grid_watch.lap("game logic");
     for(auto& cell : cells) {
-        neighbor_list = get_neighbors(cell);
-        for(auto& neighbor : neighbor_list) {
-            if(neighbor.std::reference_wrapper<Cell>::get().state == CellState::cell_on) {
-                ++living_neighbor_counter;
-            }
-        }
+        living_neighbor_counter = get_neighbors(cell);
         if(cell.state == CellState::cell_on && (living_neighbor_counter == 3 || living_neighbor_counter == 2)) {
             cell.state = CellState::cell_on;
         } else if (living_neighbor_counter > 3) {
@@ -228,21 +220,19 @@ void Grid::tick_cells() {
             cell.activate_next_cycle = true;
         }
         living_neighbor_counter = 0;
-        neighbor_list.clear();
     }
     
     //now change the cell states
-//    grid_watch.lap("change cell states");
     for(auto& cell : cells) {
         cell.tick();
     }
-    
 }
 
-std::vector<std::reference_wrapper<Cell> > Grid::get_neighbors(const Cell &current_cell) {
+int Grid::get_neighbors(const Cell &current_cell) {
+    
+    int counter{};
     
     int grid_size = grid_height * grid_width; // to use for edge cases
-    std::vector<std::reference_wrapper<Cell> > neighbor_list;
     
     //calculate current cell's index
     int this_index = current_cell.index.x + current_cell.index.y * grid_width;
@@ -299,18 +289,17 @@ std::vector<std::reference_wrapper<Cell> > Grid::get_neighbors(const Cell &curre
     assert(down_index >= 0 && down_index < grid_size);
     assert(down_right_index >= 0 && down_right_index < grid_size);
     
+    //count neighbors
+    if(cells.at(up_left_index   ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(up_index        ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(up_right_index  ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(left_index      ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(right_index     ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(down_left_index ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(down_index      ).state == CellState::cell_on) { ++counter; }
+    if(cells.at(down_right_index).state == CellState::cell_on) { ++counter; }
     
-    //push references to the neighbors into the vetor to be returned
-    neighbor_list.push_back(cells.at(up_left_index));
-    neighbor_list.push_back(cells.at(up_index));
-    neighbor_list.push_back(cells.at(up_right_index));
-    neighbor_list.push_back(cells.at(left_index));
-    neighbor_list.push_back(cells.at(right_index));
-    neighbor_list.push_back(cells.at(down_left_index));
-    neighbor_list.push_back(cells.at(down_index));
-    neighbor_list.push_back(cells.at(down_right_index));
-    
-    return neighbor_list;
+    return counter;
 }
 
 } // end conway
