@@ -11,8 +11,6 @@
 
 namespace conway {
 
-Stopwatch grid_watch{""};
-
 // Cell
 
 Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CellState st) :
@@ -228,7 +226,7 @@ void Grid::tick_cells() {
     }
 }
 
-int Grid::get_neighbors(const Cell &current_cell) {
+int Grid::get_neighbors(const Cell &current_cell) const {
     
     int counter{};
     

@@ -82,7 +82,7 @@ public:
     void push_cells(int i); //helper for setting vertices and offsets
     
     //for Game of Life rules and helper functions
-    int get_neighbors(const Cell& current_cell);
+    int get_neighbors(const Cell& current_cell) const;
 
     //getters
     sf::ConvexShape& get_drawable_at(int i);

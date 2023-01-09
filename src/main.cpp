@@ -15,7 +15,6 @@ const sf::Vector2<uint32_t> screen_dimensions { 764, 508 };
 void run(char** argv) {
     
     //init clock
-    conway::Stopwatch watch{""};
     using Clock = std::chrono::steady_clock;
     using Time = std::chrono::duration<float>;
     const double time_step = 1000.0/30.0; //30 FPS
