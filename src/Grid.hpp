@@ -10,7 +10,6 @@
 #include <vector>
 #include <cmath>
 #include <functional>
-#include <random>
 
 namespace conway {
 
@@ -88,7 +87,7 @@ public:
 
     //getters
     sf::ConvexShape& get_drawable_at(int i);
-    const int get_size();
+    int get_size() const; //is this right?
     
     //setters
     void set_spacing(float spc);

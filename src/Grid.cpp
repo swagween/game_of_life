@@ -6,6 +6,7 @@
 //
 
 #include "Grid.hpp"
+#include <random>
 
 namespace conway {
 
@@ -171,7 +172,7 @@ sf::ConvexShape& Grid::get_drawable_at(int i) {
     return cells.at(i).drawable;
 }
 
-const int Grid::get_size() {
+int Grid::get_size() const {
     return static_cast<int>(cells.size());
 }
 

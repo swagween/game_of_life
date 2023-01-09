@@ -12,9 +12,7 @@
 
 namespace {
 
-const sf::Vector2<uint32_t> screen_dimensions { 1420, 1000 };
-const int SCREEN_WIDTH = 1420;
-const int SCREEN_HEIGHT = 1000;
+const sf::Vector2<uint32_t> screen_dimensions { 764, 508 };
 
 void run(char** argv) {
     
@@ -33,7 +31,7 @@ void run(char** argv) {
     background.setFillColor(sf::Color(20, 20, 30));
     
     //declare main grid
-    conway::Grid main_grid = conway::Grid(96, 64);
+    conway::Grid main_grid = conway::Grid(48, 32);
     main_grid.set_spacing(12.0f);
     main_grid.update();
     
@@ -53,7 +51,7 @@ void run(char** argv) {
             std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
         }
         
-        end = std::chrono::system_clock::now();
+        end = std::chrono::system_clock::now(); //don't I need this?
         sleep_time = end - start;
         
         //SFML event variable
@@ -80,20 +78,19 @@ void run(char** argv) {
         
         //game logic and rendering
         if(!paused) {
-            
             main_grid.tick_cells();
-            
-            window.clear();
-            window.draw(background);
-            
-            //draw the cells
-            for(int i = 0; i < main_grid.get_size(); ++i) {
-                window.draw(main_grid.get_drawable_at(i));
-            }
-            
-            window.display();
-            
         }
+        
+        //render
+        window.clear();
+        window.draw(background);
+        
+        //draw the cells
+        for(int i = 0; i < main_grid.get_size(); ++i) {
+            window.draw(main_grid.get_drawable_at(i));
+        }
+        
+        window.display();
     }
 }
 } // namespace
