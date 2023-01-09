@@ -8,18 +8,17 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <cmath>
 #include <functional>
 
 namespace conway {
 
 //several values so we can draw nice colors as the cells die instead of just on/off
-enum class CELL_STATE {
-    CELL_OFF = 0,
-    CELL_LOW = 1,
-    CELL_MEDIUM = 2,
-    CELL_HIGH = 3,
-    CELL_ON = 4
+enum class CellState {
+    cell_off = 0,
+    cell_low = 1,
+    cell_medium = 2,
+    cell_high = 3,
+    cell_on = 4
 };
 
 //set colors for style
@@ -39,7 +38,7 @@ constexpr float default_spacing = 16.0;
 
 struct Cell {
     
-    Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE st);
+    Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CellState st);
     
     void tick();
     void set_state();
@@ -60,7 +59,7 @@ struct Cell {
     bool kill_next_cycle{};
     bool activate_next_cycle{};
     
-    CELL_STATE state{};
+    CellState state{};
 
 };
 
@@ -87,7 +86,7 @@ public:
 
     //getters
     sf::ConvexShape& get_drawable_at(int i);
-    int get_size() const; //is this right?
+    int get_size() const;
     
     //setters
     void set_spacing(float spc);

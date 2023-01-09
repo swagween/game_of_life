@@ -12,7 +12,7 @@ namespace conway {
 
 // Cell
 
-Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE st) :
+Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CellState st) :
     index(idx), position(pos), spacing(spc), state(st) {
     //init cell drawable
     drawable.setPointCount(4);
@@ -25,27 +25,27 @@ Cell::Cell(sf::Vector2<int> idx, sf::Vector2<float> pos, float spc, CELL_STATE s
 void Cell::tick() {
     // change colors based on state for style
     switch (state) {
-        case CELL_STATE::CELL_OFF:
+        case CellState::cell_off:
             drawable.setOutlineColor(GoL_Black);
             drawable.setOutlineThickness(0);
             drawable.setFillColor(GoL_Black);
             break;
-        case CELL_STATE::CELL_LOW:
+        case CellState::cell_low:
             drawable.setOutlineColor(GoL_NavyBlue);
             drawable.setOutlineThickness(-2);
             drawable.setFillColor(GoL_DarkFucshia);
             break;
-        case CELL_STATE::CELL_MEDIUM:
+        case CellState::cell_medium:
             drawable.setOutlineColor(GoL_DarkFucshia);
             drawable.setOutlineThickness(-2);
             drawable.setFillColor(GoL_Fucshia);
             break;
-        case CELL_STATE::CELL_HIGH:
+        case CellState::cell_high:
             drawable.setOutlineColor(GoL_Fucshia);
             drawable.setOutlineThickness(2);
             drawable.setFillColor(GoL_Goldenrod);
             break;
-        case CELL_STATE::CELL_ON:
+        case CellState::cell_on:
             drawable.setOutlineColor(GoL_Goldenrod);
             drawable.setOutlineThickness(2);
             drawable.setFillColor(GoL_White);
@@ -62,14 +62,14 @@ void Cell::set_state() {
         kill_next_cycle = false;
     }
     if(activate_next_cycle) {
-        state = CELL_STATE::CELL_ON;
+        state = CellState::cell_on;
         activate_next_cycle = false;
     }
 }
 
 void Cell::decrement() {
-    if(state != CELL_STATE::CELL_OFF) {
-        state = (CELL_STATE)((int)state - 1);
+    if(state != CellState::cell_off) {
+        state = (CellState)((int)state - 1);
     }
 }
 
@@ -90,17 +90,17 @@ Grid::Grid(uint32_t width, uint32_t height) : grid_width(width), grid_height(hei
     
 }
 
+int random_range(int lo, int hi) {
+    static auto engine = std::default_random_engine{std::random_device{}()};
+    return std::uniform_int_distribution<int>{lo, hi}(engine);
+}
+
 void Grid::random_init() {
-    
-    //generate random number with a uniform distribution
-    std::random_device device;
-    std::mt19937 rng(device());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 100);
-    
     for(auto& cell : cells) {
-        int r = dist6(rng);
+        //generate random number with a uniform distribution
+        int r = random_range(0, 100);
         if(r > 80) {
-            cell.state = CELL_STATE::CELL_ON;
+            cell.state = CellState::cell_on;
         }
     }
 }
@@ -128,7 +128,7 @@ void Grid::initialize() {
         } else {
             ypos = yidx*spacing;
         }
-        cells.push_back(Cell({xidx, yidx}, {xpos, ypos}, spacing, CELL_STATE::CELL_OFF));
+        cells.push_back(Cell({xidx, yidx}, {xpos, ypos}, spacing, CellState::cell_off));
         
     }
     if(cells.empty()) {
@@ -209,17 +209,17 @@ void Grid::tick_cells() {
     for(auto& cell : cells) {
         neighbor_list = get_neighbors(cell);
         for(auto& neighbor : neighbor_list) {
-            if(neighbor.std::reference_wrapper<Cell>::get().state == CELL_STATE::CELL_ON) {
+            if(neighbor.std::reference_wrapper<Cell>::get().state == CellState::cell_on) {
                 ++living_neighbor_counter;
             }
         }
-        if(cell.state == CELL_STATE::CELL_ON && (living_neighbor_counter == 3 || living_neighbor_counter == 2)) {
-            cell.state = CELL_STATE::CELL_ON;
+        if(cell.state == CellState::cell_on && (living_neighbor_counter == 3 || living_neighbor_counter == 2)) {
+            cell.state = CellState::cell_on;
         } else if (living_neighbor_counter > 3) {
             cell.kill_next_cycle = true;
         } else if (living_neighbor_counter < 3) {
             cell.kill_next_cycle = true;
-        } else if (cell.state != CELL_STATE::CELL_ON && living_neighbor_counter == 3) {
+        } else if (cell.state != CellState::cell_on && living_neighbor_counter == 3) {
             cell.activate_next_cycle = true;
         }
         living_neighbor_counter = 0;

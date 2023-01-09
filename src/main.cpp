@@ -3,11 +3,8 @@
 //  Game of Life
 //
 
-#include <SFML/Graphics.hpp>
-#include <cmath>
 #include <chrono>
 #include <thread>
-#include <iostream>
 #include "Grid.hpp"
 
 namespace {
@@ -17,14 +14,16 @@ const sf::Vector2<uint32_t> screen_dimensions { 764, 508 };
 void run(char** argv) {
     
     //init clock
-    std::chrono::time_point<std::chrono::system_clock> start{}, end{};
-    std::chrono::duration<double, std::milli> work_time{}, sleep_time{};
     
+    using Clock = std::chrono::steady_clock;
+    using Time = std::chrono::duration<float>;
     const double time_step = 1000.0/30.0; //30 FPS
+    
     bool paused = false;
     
     //some SFML variables for drawing a basic window + background
     auto window = sf::RenderWindow{sf::VideoMode{screen_dimensions.x, screen_dimensions.y}, "Game of Life v1.0"};
+    window.setVerticalSyncEnabled(true);
     sf::RectangleShape background{};
     background.setSize(static_cast<sf::Vector2<float> >(screen_dimensions));
     background.setPosition(0, 0);
@@ -35,24 +34,22 @@ void run(char** argv) {
     main_grid.set_spacing(12.0f);
     main_grid.update();
     
-    //start with a basic random init with 40% cell genesis
+    //start with a basic random init with 20% cell genesis
     main_grid.random_init();
     
     //game loop
+    auto start = Clock::now();
     while (window.isOpen()) {
         
-        start = std::chrono::system_clock::now(); //start clock
-        std::chrono::duration<double, std::milli> work_time = start - end;
+        auto now = Clock::now();
+        auto dt = Time{now - start};
+        start = now;
         
-        if (work_time.count() < time_step)
-        {
-            std::chrono::duration<double, std::milli> delta_ms(time_step - work_time.count());
+        if (dt.count() < time_step) {
+            std::chrono::duration<double, std::milli> delta_ms(time_step - dt.count());
             auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
             std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
         }
-        
-        end = std::chrono::system_clock::now(); //don't I need this?
-        sleep_time = end - start;
         
         //SFML event variable
         auto event = sf::Event{};
