@@ -6,9 +6,12 @@
 //
 
 #include "Grid.hpp"
+#include "Stopwatch.hpp"
 #include <random>
 
 namespace conway {
+
+Stopwatch grid_watch{""};
 
 // Cell
 
@@ -202,10 +205,12 @@ void Grid::push_cells(int i) {
 
 void Grid::tick_cells() {
     
+//    grid_watch.lap("init vars");
     std::vector<std::reference_wrapper<Cell> > neighbor_list{};
     int living_neighbor_counter = 0;
     
     //game logic
+//    grid_watch.lap("game logic");
     for(auto& cell : cells) {
         neighbor_list = get_neighbors(cell);
         for(auto& neighbor : neighbor_list) {
@@ -227,6 +232,7 @@ void Grid::tick_cells() {
     }
     
     //now change the cell states
+//    grid_watch.lap("change cell states");
     for(auto& cell : cells) {
         cell.tick();
     }

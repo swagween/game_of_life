@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include "Grid.hpp"
+#include "Stopwatch.hpp"
 
 namespace {
 
@@ -14,7 +15,7 @@ const sf::Vector2<uint32_t> screen_dimensions { 764, 508 };
 void run(char** argv) {
     
     //init clock
-    
+    conway::Stopwatch watch{""};
     using Clock = std::chrono::steady_clock;
     using Time = std::chrono::duration<float>;
     const double time_step = 1000.0/30.0; //30 FPS
@@ -23,7 +24,7 @@ void run(char** argv) {
     
     //some SFML variables for drawing a basic window + background
     auto window = sf::RenderWindow{sf::VideoMode{screen_dimensions.x, screen_dimensions.y}, "Game of Life v1.0"};
-    window.setVerticalSyncEnabled(true);
+//    window.setVerticalSyncEnabled(true);
     sf::RectangleShape background{};
     background.setSize(static_cast<sf::Vector2<float> >(screen_dimensions));
     background.setPosition(0, 0);
@@ -41,6 +42,7 @@ void run(char** argv) {
     auto start = Clock::now();
     while (window.isOpen()) {
         
+//        watch.lap("clock");
         auto now = Clock::now();
         auto dt = Time{now - start};
         start = now;
@@ -48,12 +50,13 @@ void run(char** argv) {
         if (dt.count() < time_step) {
             std::chrono::duration<double, std::milli> delta_ms(time_step - dt.count());
             auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
-            std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+//            std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
         }
         
         //SFML event variable
         auto event = sf::Event{};
         //check window events
+//        watch.lap("events");
         while (window.pollEvent(event)) {
             switch(event.type) {
                 case sf::Event::Closed:
@@ -75,6 +78,7 @@ void run(char** argv) {
         
         //game logic and rendering
         if(!paused) {
+//            watch.lap("grid tick");
             main_grid.tick_cells();
         }
         
@@ -83,6 +87,7 @@ void run(char** argv) {
         window.draw(background);
         
         //draw the cells
+//        watch.lap("render");
         for(int i = 0; i < main_grid.get_size(); ++i) {
             window.draw(main_grid.get_drawable_at(i));
         }
