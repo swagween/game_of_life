@@ -3,13 +3,16 @@ project(conway_gol)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_subdirectory(ext)
+
 find_package(SFML COMPONENTS graphics REQUIRED)
 
 add_executable(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics ImGui-SFML::ImGui-SFML)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
 	src
+	ext
 )
 
 target_sources(${PROJECT_NAME} PRIVATE

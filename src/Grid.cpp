@@ -104,6 +104,7 @@ void Grid::random_init() {
             cell.state = CellState::cell_on;
         }
     }
+    tick_cells();
 }
 
 void Grid::initialize() {
